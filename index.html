@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +13,7 @@
                     colors: {
                         rubi: '#8B1E3F',
                         grill: '#D89D3B',
-                        nachapa: '#000000', //'#2C3E50',
+                        nachapa: '#000000',
                         snack: '#3E8E41',
                         primary: '#D89D3B',
                         dark: '#1f2937',
@@ -25,6 +25,67 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        @supports (-webkit-touch-callout: none) {
+            .fixed {
+                position: fixed;
+                bottom: env(safe-area-inset-bottom, 0px);
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
+        }
+
+        /* Garantir que a navbar fique sempre visível e acima de outros elementos */
+        .fixed {
+            z-index: 1000;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        /* Espaço extra no final da página para compensar a navbar fixa */
+        body {
+            padding-bottom: 80px;
+        }
+
+        /* Correção específica para a bandeira no combobox */
+        .language-select-wrapper {
+            position: relative;
+            display: inline-block;
+            min-width: 120px; /* Largura mínima para evitar sobreposição */
+        }
+
+        .flag-icon {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            z-index: 10; /* Garantir que fique acima do select */
+        }
+
+        .language-select {
+            padding-left: 30px !important; /* Espaço suficiente para a bandeira */
+            padding-right: 30px !important; /* Espaço para a seta */
+            min-width: 120px;
+        }
+
+        /* Melhorar a aparência do select em dispositivos móveis */
+        @media (max-width: 768px) {
+            .language-select-wrapper {
+                min-width: 110px;
+            }
+
+            .language-select {
+                font-size: 14px;
+                padding: 6px 25px 6px 28px !important;
+            }
+
+            .flag-icon {
+                left: 6px;
+                font-size: 14px;
+            }
+        }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -82,24 +143,24 @@
         /* Estilização do combobox de idiomas */
         .language-select-wrapper {
             position: relative;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            min-width: 130px;
         }
 
         .language-select {
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
             background: transparent;
-            background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-            background-repeat: no-repeat;
-            background-position-x: 95%;
-            background-position-y: 50%;
-            padding-right: 2.5rem;
-            padding-left: 2rem;
             border: 1px solid #D89D3B;
             border-radius: 6px;
             color: white;
+            padding: 6px 30px 6px 32px;
+            font-size: 14px;
             cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 100%;
+            min-width: 120px;
         }
 
             .language-select option {
@@ -108,12 +169,26 @@
                 padding: 8px;
             }
 
+        .language-select-wrapper::after {
+            content: "▼";
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 10px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
         .flag-icon {
             position: absolute;
-            left: 8px;
+            left: 10px;
             top: 50%;
             transform: translateY(-50%);
             pointer-events: none;
+            z-index: 2;
+            font-size: 16px;
         }
 
         .search-highlight {
@@ -134,16 +209,6 @@
 <body class="bg-gray-100">
     <!-- Top bar -->
     <div class="bg-nachapa py-3 px-4 flex justify-between items-center shadow-sm">
-        <!--<div class="flex items-center">
-            <div class="h-10 w-10 rounded-full bg-grill flex items-center justify-center text-white font-bold mr-2">
-                NC
-            </div>
-            <div>
-                <p class="text-xs text-gray-300" data-i18n="restaurant_label">Restaurante</p>
-                <p class="text-sm font-medium text-white">Na Chapa</p>
-            </div>
-        </div>-->
-
         <div class="flex items-center">
             <div class="h-10 w-10 rounded-full overflow-hidden bg-white flex items-center justify-center mr-2">
                 <img src="logo-nachapa.jpg" alt="Na Chapa Logo" class="h-10 w-10 object-cover">
@@ -193,6 +258,9 @@
         <button class="category-btn px-4 py-2 rounded-full bg-gray-100 text-sm font-medium mx-1" data-category="burgers">
             <i class="fas fa-hamburger mr-1"></i> <span data-i18n="category_burgers">Hambúrgueres</span>
         </button>
+        <button class="category-btn px-4 py-2 rounded-full bg-gray-100 text-sm font-medium mx-1" data-category="drinks">
+            <i class="fas fa-glass-whiskey mr-1"></i> <span data-i18n="category_drinks">Bebidas</span>
+        </button>
         <button class="category-btn px-4 py-2 rounded-full bg-gray-100 text-sm font-medium mx-1" data-category="desserts">
             <i class="fas fa-ice-cream mr-1"></i> <span data-i18n="category_desserts">Sobremesas</span>
         </button>
@@ -205,10 +273,6 @@
                 <source src="nachapavideo.mp4" type="video/mp4">
                 Seu navegador não suporta vídeos HTML5.
             </video>
-            <!--<div class="video-overlay">
-                <h3 class="font-bold text-lg">Na Chapa</h3>
-                <p class="text-sm" data-i18n="video_subtitle">Sabor autêntico na sua mesa</p>
-            </div>-->
         </div>
     </div>
 
@@ -474,6 +538,168 @@
             </div>
         </div>
 
+        <!-- Categoria: Bebidas -->
+        <div class="mt-6 px-4 category-section" data-category="drinks">
+            <h2 class="text-xl font-bold mb-3" data-i18n="section_drinks">Bebidas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Coca-Cola / Coca-Cola Zero (33cl) -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks refrigerante" data-search="Coca-Cola Coca-Cola Zero 33cl">
+                    <div class="w-full h-40 bg-gradient-to-r from-red-100 to-red-200 flex items-center justify-center">
+                        <i class="fas fa-glass-whiskey text-4xl text-red-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold">Coca-Cola / Coca-Cola Zero (33cl)</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">3,00 €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sprite / Fanta (33cl) -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks refrigerante" data-search="Sprite Fanta 33cl">
+                    <div class="w-full h-40 bg-gradient-to-r from-green-100 to-green-200 flex items-center justify-center">
+                        <i class="fas fa-glass-whiskey text-4xl text-green-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold">Sprite / Fanta (33cl)</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">3,00 €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guaraná Antarctica -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks refrigerante" data-search="Guaraná Antarctica">
+                    <div class="w-full h-40 bg-gradient-to-r from-green-100 to-green-200 flex items-center justify-center">
+                        <i class="fas fa-glass-whiskey text-4xl text-green-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold">Guaraná Antarctica</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">3,50 €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monster Energy -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks energético" data-search="Monster Energy">
+                    <div class="w-full h-40 bg-gradient-to-r from-green-100 to-green-200 flex items-center justify-center">
+                        <i class="fas fa-bolt text-4xl text-green-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold">Monster Energy</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">3,50 €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fuze Tea / Multivitamine -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks chá" data-search="Fuze Tea Multivitamine">
+                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
+                        <i class="fas fa-glass-whiskey text-4xl text-yellow-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold">Fuze Tea / Multivitamine</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">3,30 €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coca-Cola / Coca-Cola Zero (50cl) -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks refrigerante" data-search="Coca-Cola Coca-Cola Zero 50cl">
+                    <div class="w-full h-40 bg-gradient-to-r from-red-100 to-red-200 flex items-center justify-center">
+                        <i class="fas fa-glass-whiskey text-4xl text-red-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold">Coca-Cola / Coca-Cola Zero (50cl)</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">3,70 €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sprite / Fanta (50cl) -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks refrigerante" data-search="Sprite Fanta 50cl">
+                    <div class="w-full h-40 bg-gradient-to-r from-green-100 to-green-200 flex items-center justify-center">
+                        <i class="fas fa-glass-whiskey text-4xl text-green-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold">Sprite / Fanta (50cl)</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">3,70 €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rosport Blue / Viva (50cl) -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks água" data-search="Rosport Blue Viva 50cl">
+                    <div class="w-full h-40 bg-gradient-to-r from-blue-100 to-blue-200 flex items-center justify-center">
+                        <i class="fas fa-tint text-4xl text-blue-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold">Rosport Blue / Viva (50cl)</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">3,50 €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Café -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks café" data-search="Café">
+                    <div class="w-full h-40 bg-gradient-to-r from-brown-100 to-brown-200 flex items-center justify-center">
+                        <i class="fas fa-coffee text-4xl text-brown-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold">Café</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">2,50 €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cerveja (33cl) -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks cerveja" data-search="Cerveja 33cl">
+                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
+                        <i class="fas fa-beer text-4xl text-yellow-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold">Cerveja (33cl)</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">3,50 €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cerveja (50cl) -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks cerveja" data-search="Cerveja 50cl">
+                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
+                        <i class="fas fa-beer text-4xl text-yellow-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold">Cerveja (50cl)</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">4,50 €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Caipirinha -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks caipirinha" data-search="Caipirinha">
+                    <div class="w-full h-40 bg-gradient-to-r from-green-100 to-green-200 flex items-center justify-center">
+                        <i class="fas fa-cocktail text-4xl text-green-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold">Caipirinha</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">8,00 €</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Categoria: Acompanhamentos -->
         <div class="mt-6 px-4 category-section" data-category="sides">
             <h2 class="text-xl font-bold mb-3" data-i18n="section_sides">Acompanhamentos</h2>
@@ -590,7 +816,26 @@
     </div>
 
     <!-- Navegação inferior (footer) -->
-    <div class="fixed bottom-0 left-0 right-0 bg-nachapa shadow-lg flex justify-around items-center py-3">
+    <!--<div class="fixed bottom-0 left-0 right-0 bg-nachapa shadow-lg flex justify-around items-center py-3">
+        <a href="#" class="text-center nav-link active">
+            <i class="fas fa-home text-lg"></i>
+            <p class="text-xs mt-1" data-i18n="nav_home">Início</p>
+        </a>
+        <a href="#" id="searchNav" class="text-center nav-link">
+            <i class="fas fa-search text-lg"></i>
+            <p class="text-xs mt-1" data-i18n="nav_search">Buscar</p>
+        </a>
+        <a href="https://instagram.com/nachapa_lux" target="_blank" class="text-center nav-link">
+            <i class="fab fa-instagram text-lg"></i>
+            <p class="text-xs mt-1" data-i18n="nav_instagram">Instagram</p>
+        </a>
+        <a href="tel:+352691244215" class="text-center nav-link">
+            <i class="fas fa-phone-alt text-lg"></i>
+            <p class="text-xs mt-1" data-i18n="nav_contact">Contato</p>
+        </a>
+    </div>-->
+
+    <div class="fixed bottom-0 left-0 right-0 bg-nachapa shadow-lg flex justify-around items-center py-3 safe-area-bottom">
         <a href="#" class="text-center nav-link active">
             <i class="fas fa-home text-lg"></i>
             <p class="text-xs mt-1" data-i18n="nav_home">Início</p>
@@ -621,6 +866,7 @@
                 "category_dishes": "Pratos",
                 "category_tacos": "Tacos",
                 "category_burgers": "Hambúrgueres",
+                "category_drinks": "Bebidas",
                 "category_desserts": "Sobremesas",
                 "video_subtitle": "Sabor autêntico na sua mesa",
                 "popular_badge": "Mais vendido",
@@ -632,6 +878,7 @@
                 "section_dishes": "Pratos Principais",
                 "section_tacos": "Tacos",
                 "section_burgers": "Hambúrgueres",
+                "section_drinks": "Bebidas",
                 "section_sides": "Acompanhamentos",
                 "section_desserts": "Sobremesas",
 
@@ -707,6 +954,7 @@
                 "category_dishes": "Main Dishes",
                 "category_tacos": "Tacos",
                 "category_burgers": "Burgers",
+                "category_drinks": "Drinks",
                 "category_desserts": "Desserts",
                 "video_subtitle": "Authentic flavor at your table",
                 "popular_badge": "Most popular",
@@ -718,6 +966,7 @@
                 "section_dishes": "Main Dishes",
                 "section_tacos": "Tacos",
                 "section_burgers": "Burgers",
+                "section_drinks": "Drinks",
                 "section_sides": "Side Dishes",
                 "section_desserts": "Desserts",
 
@@ -793,6 +1042,7 @@
                 "category_dishes": "Plats Principaux",
                 "category_tacos": "Tacos",
                 "category_burgers": "Hamburgers",
+                "category_drinks": "Boissons",
                 "category_desserts": "Desserts",
                 "video_subtitle": "Saveur authentique à votre table",
                 "popular_badge": "Plus populaire",
@@ -804,6 +1054,7 @@
                 "section_dishes": "Plats Principaux",
                 "section_tacos": "Tacos",
                 "section_burgers": "Hamburgers",
+                "section_drinks": "Boissons",
                 "section_sides": "Accompagnements",
                 "section_desserts": "Desserts",
 
@@ -879,6 +1130,7 @@
                 "category_dishes": "Hauptgerichte",
                 "category_tacos": "Tacos",
                 "category_burgers": "Burger",
+                "category_drinks": "Getränke",
                 "category_desserts": "Nachspeisen",
                 "video_subtitle": "Authentischer Geschmack an Ihrem Tisch",
                 "popular_badge": "Beliebteste",
@@ -890,6 +1142,7 @@
                 "section_dishes": "Hauptgerichte",
                 "section_tacos": "Tacos",
                 "section_burgers": "Burger",
+                "section_drinks": "Getränke",
                 "section_sides": "Beilagen",
                 "section_desserts": "Nachspeisen",
 
@@ -965,6 +1218,7 @@
                 "category_dishes": "Haaptcoursen",
                 "category_tacos": "Tacos",
                 "category_burgers": "Hamburgers",
+                "category_drinks": "Gedrénker",
                 "category_desserts": "Desserten",
                 "video_subtitle": "Authentche Geschmaack op ärem Dësch",
                 "popular_badge": "Méi beléift",
@@ -976,6 +1230,7 @@
                 "section_dishes": "Haaptcoursen",
                 "section_tacos": "Tacos",
                 "section_burgers": "Hamburgers",
+                "section_drinks": "Gedrénker",
                 "section_sides": "Bäilagen",
                 "section_desserts": "Desserten",
 
@@ -1100,10 +1355,10 @@
                     noResults.id = 'noResults';
                     noResults.className = 'text-center py-10 px-4';
                     noResults.innerHTML = `
-                            <i class="fas fa-fire fa-3x text-gray-300 mb-4"></i>
-                            <h3 class="text-xl font-bold text-gray-600" data-i18n="no_results_title">Nenhum item popular encontrado</h3>
-                            <p class="text-gray-500" data-i18n="no_results_text">Volte em breve para ver nossos mais vendidos!</p>
-                        `;
+                                <i class="fas fa-fire fa-3x text-gray-300 mb-4"></i>
+                                <h3 class="text-xl font-bold text-gray-600" data-i18n="no_results_title">Nenhum item popular encontrado</h3>
+                                <p class="text-gray-500" data-i18n="no_results_text">Volte em breve para ver nossos mais vendidos!</p>
+                            `;
                     menuContent.appendChild(noResults);
 
                     // Traduzir mensagem
@@ -1178,11 +1433,13 @@
                 const nameElement = card.querySelector('h3');
                 const descElement = card.querySelector('p');
                 const nameText = nameElement.textContent.toLowerCase();
-                const descText = descElement.textContent.toLowerCase();
+                const descText = descElement ? descElement.textContent.toLowerCase() : '';
 
                 // Remover destaque anterior
                 nameElement.innerHTML = nameElement.textContent;
-                descElement.innerHTML = descElement.textContent;
+                if (descElement) {
+                    descElement.innerHTML = descElement.textContent;
+                }
 
                 if (searchData.includes(searchTerm) || nameText.includes(searchTerm) || descText.includes(searchTerm)) {
                     card.style.display = 'block';
@@ -1197,7 +1454,9 @@
                     // Adicionar destaque ao texto
                     const regex = new RegExp(`(${searchTerm})`, 'gi');
                     nameElement.innerHTML = nameElement.textContent.replace(regex, '<span class="search-highlight">$1</span>');
-                    descElement.innerHTML = descElement.textContent.replace(regex, '<span class="search-highlight">$1</span>');
+                    if (descElement) {
+                        descElement.innerHTML = descElement.textContent.replace(regex, '<span class="search-highlight">$1</span>');
+                    }
                 } else {
                     card.style.display = 'none';
                 }
@@ -1211,10 +1470,10 @@
                     noResults.id = 'noResults';
                     noResults.className = 'text-center py-10 px-4';
                     noResults.innerHTML = `
-                            <i class="fas fa-search fa-3x text-gray-300 mb-4"></i>
-                            <h3 class="text-xl font-bold text-gray-600" data-i18n="no_results_title">Nenhum resultado encontrado</h3>
-                            <p class="text-gray-500" data-i18n="no_results_text">Tente usar palavras-chave diferentes</p>
-                        `;
+                                <i class="fas fa-search fa-3x text-gray-300 mb-4"></i>
+                                <h3 class="text-xl font-bold text-gray-600" data-i18n="no_results_title">Nenhum resultado encontrado</h3>
+                                <p class="text-gray-500" data-i18n="no_results_text">Tente usar palavras-chave diferentes</p>
+                            `;
                     menuContent.appendChild(noResults);
 
                     // Traduzir mensagem de nenhum resultado
@@ -1305,6 +1564,61 @@
             // Configurar o idioma inicial
             changeLanguage('pt');
         });
+
+        function fixIosNavbar() {
+            // Detectar se é iOS
+            const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+            if (isIos) {
+                // Ajustar a altura da navbar para considerar a safe area
+                const navbar = document.querySelector('.fixed');
+                if (navbar) {
+                    // Aplicar padding para a safe area do iPhone
+                    navbar.style.paddingBottom = 'env(safe-area-inset-bottom)';
+                    navbar.style.bottom = '0';
+                }
+
+                // Prevenir comportamento de pull-to-refresh que pode afetar a navbar
+                document.body.style.overscrollBehaviorY = 'none';
+            }
+        }
+
+        // Função para ajustar o layout quando o viewport muda (teclado aparece/desaparece)
+        function handleViewportChanges() {
+            // Ajustar a posição da navbar quando o teclado aparece/desaparece
+            window.addEventListener('resize', function () {
+                const navbar = document.querySelector('.fixed');
+                if (navbar) {
+                    navbar.style.bottom = '0';
+                }
+            });
+        }
+
+        // Inicializar as correções quando o DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', function () {
+            fixIosNavbar();
+            handleViewportChanges();
+
+            // Adicionar um pequeno delay para garantir que tudo esteja carregado
+            setTimeout(() => {
+                // Forçar repaint da navbar para evitar problemas de renderização
+                const navbar = document.querySelector('.fixed');
+                if (navbar) {
+                    navbar.style.transform = 'translateZ(0)';
+                }
+            }, 100);
+        });
+
+        // Correção adicional para quando a página é rolada
+        window.addEventListener('scroll', function () {
+            const navbar = document.querySelector('.fixed');
+            if (navbar) {
+                // Manter a navbar sempre no fundo da tela
+                navbar.style.bottom = '0';
+                navbar.style.transform = 'translateY(0)';
+            }
+        });
+
     </script>
 </body>
 </html>
