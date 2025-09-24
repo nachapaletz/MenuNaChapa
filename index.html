@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Na Chapa - Cardápio Digital</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rubi: '#8B1E3F',
+                        grill: '#D89D3B',
+                        nachapa: '#000000', //'#2C3E50',
+                        snack: '#3E8E41',
+                        primary: '#D89D3B',
+                        dark: '#1f2937',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f8f8;
+            padding-bottom: 80px;
+        }
+
+        .menu-card {
+            transition: all 0.3s ease;
+        }
+
+            .menu-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+        .category-btn.active {
+            background-color: #D89D3B;
+            color: white;
+        }
+
+        .tab-active {
+            color: #D89D3B;
+            border-bottom: 3px solid #D89D3B;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+            .video-container video {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 15px;
+            color: white;
+        }
+
+        /* Estilização do combobox de idiomas */
+        .language-select-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .language-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: transparent;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position-x: 95%;
+            background-position-y: 50%;
+            padding-right: 2.5rem;
+            padding-left: 2rem;
+            border: 1px solid #D89D3B;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+        }
+
+            .language-select option {
+                background: white;
+                color: black;
+                padding: 8px;
+            }
+
+        .flag-icon {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .search-highlight {
+            background-color: #FFEB3B;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        .nav-link.active {
+            color: #D89D3B;
+        }
+
+        .nav-link:not(.active) {
+            color: #A0AEC0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Top bar -->
+    <div class="bg-nachapa py-3 px-4 flex justify-between items-center shadow-sm">
+        <!--<div class="flex items-center">
+            <div class="h-10 w-10 rounded-full bg-grill flex items-center justify-center text-white font-bold mr-2">
+                NC
+            </div>
+            <div>
+                <p class="text-xs text-gray-300" data-i18n="restaurant_label">Restaurante</p>
+                <p class="text-sm font-medium text-white">Na Chapa</p>
+            </div>
+        </div>-->
+
+        <div class="flex items-center">
+            <div class="h-10 w-10 rounded-full overflow-hidden bg-white flex items-center justify-center mr-2">
+                <img src="logo-nachapa.jpg" alt="Na Chapa Logo" class="h-10 w-10 object-cover">
+            </div>
+            <div>
+                <p class="text-xs text-gray-300" data-i18n="restaurant_label">Restaurante</p>
+                <p class="text-sm font-medium text-white">Na Chapa</p>
+            </div>
+        </div>
+        <div class="flex items-center">
+            <!-- Combobox de idiomas estilizado -->
+            <div class="language-select-wrapper mr-3">
+                <span class="flag-icon">🇧🇷</span>
+                <select class="language-select text-white bg-nachapa rounded px-2 py-1 text-sm" id="languageSelector">
+                    <option value="pt" selected>Português</option>
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="lu">Lëtzebuergesch</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de busca -->
+    <div class="bg-white p-4 shadow-sm">
+        <div class="flex items-center bg-gray-100 rounded-lg px-4 py-2">
+            <i class="fas fa-search text-gray-400 mr-2"></i>
+            <input type="text" id="searchInput" placeholder="Buscar no cardápio" class="bg-gray-100 w-full focus:outline-none" data-i18n="search_placeholder">
+        </div>
+    </div>
+
+    <!-- Categorias com ícones -->
+    <div class="bg-white mt-2 px-4 py-3 overflow-x-auto whitespace-nowrap">
+        <button class="category-btn active px-4 py-2 rounded-full bg-gray-100 text-sm font-medium mx-1" data-category="all">
+            <i class="fas fa-utensils mr-1"></i> <span data-i18n="category_all">Todos</span>
+        </button>
+        <button class="category-btn px-4 py-2 rounded-full bg-gray-100 text-sm font-medium mx-1" data-category="popular">
+            <i class="fas fa-fire mr-1"></i> <span data-i18n="category_popular">Mais Vendidos</span>
+        </button>
+        <button class="category-btn px-4 py-2 rounded-full bg-gray-100 text-sm font-medium mx-1" data-category="dishes">
+            <i class="fas fa-drumstick-bite mr-1"></i> <span data-i18n="category_dishes">Pratos</span>
+        </button>
+        <button class="category-btn px-4 py-2 rounded-full bg-gray-100 text-sm font-medium mx-1" data-category="tacos">
+            <i class="fas fa-utensils mr-1"></i> <span data-i18n="category_tacos">Tacos</span>
+        </button>
+        <button class="category-btn px-4 py-2 rounded-full bg-gray-100 text-sm font-medium mx-1" data-category="burgers">
+            <i class="fas fa-hamburger mr-1"></i> <span data-i18n="category_burgers">Hambúrgueres</span>
+        </button>
+        <button class="category-btn px-4 py-2 rounded-full bg-gray-100 text-sm font-medium mx-1" data-category="desserts">
+            <i class="fas fa-ice-cream mr-1"></i> <span data-i18n="category_desserts">Sobremesas</span>
+        </button>
+    </div>
+
+    <!-- Vídeo promocional -->
+    <div class="mx-4 mt-4 rounded-xl overflow-hidden">
+        <div class="video-container">
+            <video autoplay loop muted playsinline>
+                <source src="nachapavideo.mp4" type="video/mp4">
+                Seu navegador não suporta vídeos HTML5.
+            </video>
+            <!--<div class="video-overlay">
+                <h3 class="font-bold text-lg">Na Chapa</h3>
+                <p class="text-sm" data-i18n="video_subtitle">Sabor autêntico na sua mesa</p>
+            </div>-->
+        </div>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div id="menuContent">
+        <!-- Categoria: Pratos Principais -->
+        <div class="mt-6 px-4 category-section" data-category="dishes">
+            <h2 class="text-xl font-bold mb-3" data-i18n="section_dishes">Pratos Principais</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Picanha Grill Na Chapa -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="popular dishes carne" data-search="Picanha Grill Na Chapa carne bovina fritas salada">
+                    <div class="relative">
+                        <div class="w-full h-40 bg-gradient-to-r from-orange-100 to-orange-200 flex items-center justify-center">
+                            <i class="fas fa-drumstick-bite text-4xl text-orange-400"></i>
+                        </div>
+                        <span class="absolute top-2 left-2 bg-grill text-white text-xs font-bold px-2 py-1 rounded" data-i18n="popular_badge">Mais vendido</span>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="dish1_name">Picanha Grill Na Chapa</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">18,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="dish1_desc">200g de carne bovina grelhada, servida com fritas e salada</p>
+                    </div>
+                </div>
+
+                <!-- Maminha Grill Na Chapa -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="dishes carne" data-search="Maminha Grill Na Chapa carne bovina fritas salada">
+                    <div class="w-full h-40 bg-gradient-to-r from-red-100 to-red-200 flex items-center justify-center">
+                        <i class="fas fa-drumstick-bite text-4xl text-red-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="dish2_name">Maminha Grill Na Chapa</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">18,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="dish2_desc">200g de carne bovina grelhada, servida com fritas e salada</p>
+                    </div>
+                </div>
+
+                <!-- Filé de Frango -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="dishes frango" data-search="Filé de Frango frango grelhado fritas salada">
+                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
+                        <i class="fas fa-drumstick-bite text-4xl text-yellow-500"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="dish3_name">Filé de Frango</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">16,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="dish3_desc">150g de frango grelhado, servido com fritas e salada</p>
+                    </div>
+                </div>
+
+                <!-- Chicken Wings -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="dishes frango" data-search="Chicken Wings asas de frango fritas molho">
+                    <div class="w-full h-40 bg-gradient-to-r from-red-100 to-red-200 flex items-center justify-center">
+                        <i class="fas fa-drumstick-bite text-4xl text-red-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="dish5_name">Chicken Wings</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">16,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="dish5_desc">Asas de frango marinadas e fritas, servidas com fritas e molho</p>
+                    </div>
+                </div>
+
+                <!-- Premium Na Chapa -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="popular dishes premium carne" data-search="Premium Na Chapa picanha 400g">
+                    <div class="relative">
+                        <div class="w-full h-40 bg-gradient-to-r from-purple-100 to-purple-200 flex items-center justify-center">
+                            <i class="fas fa-crown text-4xl text-purple-400"></i>
+                        </div>
+                        <span class="absolute top-2 left-2 bg-grill text-white text-xs font-bold px-2 py-1 rounded" data-i18n="popular_badge">Mais vendido</span>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="dish6_name">Premium Na Chapa</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">40,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="dish6_desc">400g de picanha grelhada de alta qualidade</p>
+                    </div>
+                </div>
+
+                <!-- Premium Maminha -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="dishes premium carne" data-search="Premium Maminha maminha 400g">
+                    <div class="w-full h-40 bg-gradient-to-r from-purple-100 to-purple-200 flex items-center justify-center">
+                        <i class="fas fa-crown text-4xl text-purple-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="dish7_name">Premium Maminha</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">38,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="dish7_desc">400g de maminha grelhada de alta qualidade</p>
+                    </div>
+                </div>
+
+                <!-- Premium Mixte -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="popular dishes premium carne mista" data-search="Premium Mixte picanha maminha frango linguiça">
+                    <div class="relative">
+                        <div class="w-full h-40 bg-gradient-to-r from-purple-100 to-purple-200 flex items-center justify-center">
+                            <i class="fas fa-crown text-4xl text-purple-400"></i>
+                        </div>
+                        <span class="absolute top-2 left-2 bg-grill text-white text-xs font-bold px-2 py-1 rounded" data-i18n="popular_badge">Mais vendido</span>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="dish8_name">Premium Mixte</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">39,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="dish8_desc">100g de picanha, 100g de maminha, 100g de frango e 100g de linguiça</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categoria: Tacos -->
+        <div class="mt-6 px-4 category-section" data-category="tacos">
+            <h2 class="text-xl font-bold mb-3" data-i18n="section_tacos">Tacos</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Tacos Carne Moída -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="tacos carne" data-search="Tacos Carne Moída queijo molho fritas">
+                    <div class="w-full h-40 bg-gradient-to-r from-orange-100 to-orange-200 flex items-center justify-center">
+                        <i class="fas fa-utensils text-4xl text-orange-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="taco1_name">Tacos Carne Moída</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">10,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="taco1_desc">Carne moída, queijo, molho especial e fritas</p>
+                    </div>
+                </div>
+
+                <!-- Tacos Frango -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="tacos frango" data-search="Tacos Frango queijo molho fritas">
+                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
+                        <i class="fas fa-utensils text-4xl text-yellow-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="taco2_name">Tacos Frango</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">10,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="taco2_desc">Frango, queijo, molho especial e fritas</p>
+                    </div>
+                </div>
+
+                <!-- Special Tacos Picanha -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="popular tacos premium" data-search="Special Tacos Picanha queijo molho">
+                    <div class="relative">
+                        <div class="w-full h-40 bg-gradient-to-r from-red-100 to-red-200 flex items-center justify-center">
+                            <i class="fas fa-utensils text-4xl text-red-400"></i>
+                        </div>
+                        <span class="absolute top-2 left-2 bg-grill text-white text-xs font-bold px-2 py-1 rounded" data-i18n="popular_badge">Mais vendido</span>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="taco3_name">Special Tacos Picanha</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">11,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="taco3_desc">Picanha, queijo especial e molho da casa</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categoria: Hambúrgueres -->
+        <div class="mt-6 px-4 category-section" data-category="burgers">
+            <h2 class="text-xl font-bold mb-3" data-i18n="section_burgers">Hambúrgueres</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Hambúrguer Artesanal Maison -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="burgers carne" data-search="Hambúrguer Artesanal Maison gorgonzola">
+                    <div class="w-full h-40 bg-gradient-to-r from-orange-100 to-orange-200 flex items-center justify-center">
+                        <i class="fas fa-hamburger text-4xl text-orange-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="burger1_name">Hambúrguer Artesanal Maison</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">13,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="burger1_desc">Hambúrguer artesanal, queijo gorgonzola, tomate e alface</p>
+                    </div>
+                </div>
+
+                <!-- Premium Cheddar -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="popular burgers premium" data-search="Premium Cheddar hambúrguer cebola caramelizada bacon crispy">
+                    <div class="relative">
+                        <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
+                            <i class="fas fa-hamburger text-4xl text-yellow-400"></i>
+                        </div>
+                        <span class="absolute top-2 left-2 bg-grill text-white text-xs font-bold px-2 py-1 rounded" data-i18n="popular_badge">Mais vendido</span>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="burger5_name">Premium Cheddar</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">16,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="burger5_desc">Hambúrguer, cebola caramelizada, cheddar e bacon crispy</p>
+                    </div>
+                </div>
+
+                <!-- Premium Bacon BBQ -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="burgers premium" data-search="Premium Bacon BBQ hambúrguer maionese bbq cebola caramelizada bacon">
+                    <div class="w-full h-40 bg-gradient-to-r from-red-100 to-red-200 flex items-center justify-center">
+                        <i class="fas fa-hamburger text-4xl text-red-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="burger6_name">Premium Bacon BBQ</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">16,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="burger6_desc">Hambúrguer, maionese da casa, BBQ da casa, cebola caramelizada e bacon em fatias</p>
+                    </div>
+                </div>
+
+                <!-- Bifana Maison -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="burgers porco" data-search="Bifana Maison porco queijo molho">
+                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
+                        <i class="fas fa-hamburger text-4xl text-yellow-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="burger2_name">Bifana Maison</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">10,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="burger2_desc">Pão artesanal, carne de porco, queijo e molho especial</p>
+                    </div>
+                </div>
+
+                <!-- Hambúrguer Vegetariano -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="burgers vegetariano" data-search="Hambúrguer Vegetariano legumes molho">
+                    <div class="relative">
+                        <div class="w-full h-40 bg-gradient-to-r from-green-100 to-green-200 flex items-center justify-center">
+                            <i class="fas fa-hamburger text-4xl text-green-400"></i>
+                        </div>
+                        <span class="absolute top-2 left-2 bg-snack text-white text-xs font-bold px-2 py-1 rounded" data-i18n="vegetarian_badge">Vegetariano</span>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="burger3_name">Hambúrguer Vegetariano</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">13,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="burger3_desc">Hambúrguer de legumes, queijo, tomate e molho especial</p>
+                    </div>
+                </div>
+
+                <!-- Menu Infantil -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="burgers infantil" data-search="Menu Infantil hambúrguer fritas bebida">
+                    <div class="w-full h-40 bg-gradient-to-r from-blue-100 to-blue-200 flex items-center justify-center">
+                        <i class="fas fa-child text-4xl text-blue-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="burger4_name">Menu Infantil</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">7,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="burger4_desc">Hambúrguer ou Nuggets, fritas e bebida</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categoria: Acompanhamentos -->
+        <div class="mt-6 px-4 category-section" data-category="sides">
+            <h2 class="text-xl font-bold mb-3" data-i18n="section_sides">Acompanhamentos</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Fritas -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="sides fritas" data-search="Fritas batata">
+                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
+                        <i class="fas fa-potato text-4xl text-yellow-500"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="side1_name">Fritas</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">3,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="side1_desc">Porção de batatas fritas crocantes</p>
+                    </div>
+                </div>
+
+                <!-- Arroz -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="sides arroz" data-search="Arroz">
+                    <div class="w-full h-40 bg-gradient-to-r from-white to-gray-100 flex items-center justify-center">
+                        <i class="fas fa-mortar-pestle text-4xl text-gray-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="side2_name">Arroz</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">3,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="side2_desc">Porção de arroz branco</p>
+                    </div>
+                </div>
+
+                <!-- Feijão -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="sides feijao" data-search="Feijão">
+                    <div class="w-full h-40 bg-gradient-to-r from-brown-100 to-brown-200 flex items-center justify-center">
+                        <i class="fas fa-mortar-pestle text-4xl text-brown-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="side3_name">Feijão</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">3,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="side3_desc">Porção de feijão</p>
+                    </div>
+                </div>
+
+                <!-- Molho Queijo -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="sides molho" data-search="Molho Queijo casa">
+                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
+                        <i class="fas fa-cheese text-4xl text-yellow-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="side4_name">Molho Queijo da Casa</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">3,90 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="side4_desc">Molho especial de queijo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categoria: Sobremesas -->
+        <div class="mt-6 px-4 category-section" data-category="desserts">
+            <h2 class="text-xl font-bold mb-3" data-i18n="section_desserts">Sobremesas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Açaí Supreme -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="popular desserts acai" data-search="Açaí Supreme frutas">
+                    <div class="relative">
+                        <div class="w-full h-40 bg-gradient-to-r from-purple-100 to-purple-200 flex items-center justify-center">
+                            <i class="fas fa-ice-cream text-4xl text-purple-400"></i>
+                        </div>
+                        <span class="absolute top-2 left-2 bg-grill text-white text-xs font-bold px-2 py-1 rounded" data-i18n="popular_badge">Mais vendido</span>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="dessert1_name">Açaí Supreme</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">8,00 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="dessert1_desc">Tigela de açaí com frutas e granola</p>
+                        <p class="text-xs text-grill mt-1" data-i18n="dessert1_extra">Tigela XL: 14,00 € | Adicionais: 0,80 €</p>
+                    </div>
+                </div>
+
+                <!-- Sorvetes -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="desserts sorvete" data-search="Sorvetes bolas">
+                    <div class="w-full h-40 bg-gradient-to-r from-blue-100 to-blue-200 flex items-center justify-center">
+                        <i class="fas fa-ice-cream text-4xl text-blue-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="dessert2_name">Sorvetes</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">8,00 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="dessert2_desc">Taça com 3 bolas de sorvete</p>
+                    </div>
+                </div>
+
+                <!-- Mousse de Chocolate -->
+                <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="desserts chocolate" data-search="Mousse de Chocolate">
+                    <div class="w-full h-40 bg-gradient-to-r from-brown-100 to-brown-200 flex items-center justify-center">
+                        <i class="fas fa-birthday-cake text-4xl text-brown-400"></i>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold" data-i18n="dessert3_name">Mousse de Chocolate</h3>
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-bold">7,00 €</span>
+                        </div>
+                        <p class="text-gray-600 mt-2 text-xs" data-i18n="dessert3_desc">Mousse de chocolate cremosa (140g)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegação inferior (footer) -->
+    <div class="fixed bottom-0 left-0 right-0 bg-nachapa shadow-lg flex justify-around items-center py-3">
+        <a href="#" class="text-center nav-link active">
+            <i class="fas fa-home text-lg"></i>
+            <p class="text-xs mt-1" data-i18n="nav_home">Início</p>
+        </a>
+        <a href="#" id="searchNav" class="text-center nav-link">
+            <i class="fas fa-search text-lg"></i>
+            <p class="text-xs mt-1" data-i18n="nav_search">Buscar</p>
+        </a>
+        <a href="https://instagram.com/nachapa_lux" target="_blank" class="text-center nav-link">
+            <i class="fab fa-instagram text-lg"></i>
+            <p class="text-xs mt-1" data-i18n="nav_instagram">Instagram</p>
+        </a>
+        <a href="tel:+352691244215" class="text-center nav-link">
+            <i class="fas fa-phone-alt text-lg"></i>
+            <p class="text-xs mt-1" data-i18n="nav_contact">Contato</p>
+        </a>
+    </div>
+
+    <script>
+        // Traduções completas
+        const translations = {
+            pt: {
+                // Interface
+                "restaurant_label": "Restaurante",
+                "search_placeholder": "Buscar no cardápio",
+                "category_all": "Todos",
+                "category_popular": "Mais Vendidos",
+                "category_dishes": "Pratos",
+                "category_tacos": "Tacos",
+                "category_burgers": "Hambúrgueres",
+                "category_desserts": "Sobremesas",
+                "video_subtitle": "Sabor autêntico na sua mesa",
+                "popular_badge": "Mais vendido",
+                "vegetarian_badge": "Vegetariano",
+                "no_results_title": "Nenhum resultado encontrado",
+                "no_results_text": "Tente usar palavras-chave diferentes",
+
+                // Seções
+                "section_dishes": "Pratos Principais",
+                "section_tacos": "Tacos",
+                "section_burgers": "Hambúrgueres",
+                "section_sides": "Acompanhamentos",
+                "section_desserts": "Sobremesas",
+
+                // Navegação
+                "nav_home": "Início",
+                "nav_search": "Buscar",
+                "nav_instagram": "Instagram",
+                "nav_contact": "Contato",
+
+                // Itens do menu - Pratos
+                "dish1_name": "Picanha Grill Na Chapa",
+                "dish1_desc": "200g de carne bovina grelhada, servida com fritas e salada",
+                "dish2_name": "Maminha Grill Na Chapa",
+                "dish2_desc": "200g de carne bovina grelhada, servida com fritas e salada",
+                "dish3_name": "Filé de Frango",
+                "dish3_desc": "150g de frango grelhado, servido com fritas e salada",
+                "dish5_name": "Chicken Wings",
+                "dish5_desc": "Asas de frango marinadas e fritas, servidas com fritas e molho",
+                "dish6_name": "Premium Na Chapa",
+                "dish6_desc": "400g de picanha grelhada de alta qualidade",
+                "dish7_name": "Premium Maminha",
+                "dish7_desc": "400g de maminha grelhada de alta qualidade",
+                "dish8_name": "Premium Mixte",
+                "dish8_desc": "100g de picanha, 100g de maminha, 100g de frango e 100g de linguiça",
+
+                // Itens do menu - Tacos
+                "taco1_name": "Tacos Carne Moída",
+                "taco1_desc": "Carne moída, queijo, molho especial e fritas",
+                "taco2_name": "Tacos Frango",
+                "taco2_desc": "Frango, queijo, molho especial e fritas",
+                "taco3_name": "Special Tacos Picanha",
+                "taco3_desc": "Picanha, queijo especial e molho da casa",
+
+                // Itens do menu - Hambúrgueres
+                "burger1_name": "Hambúrguer Artesanal Maison",
+                "burger1_desc": "Hambúrguer artesanal, queijo gorgonzola, tomate e alface",
+                "burger2_name": "Bifana Maison",
+                "burger2_desc": "Pão artesanal, carne de porco, queijo e molho especial",
+                "burger3_name": "Hambúrguer Vegetariano",
+                "burger3_desc": "Hambúrguer de legumes, queijo, tomate e molho especial",
+                "burger4_name": "Menu Infantil",
+                "burger4_desc": "Hambúrguer, fritas e bebida",
+                "burger5_name": "Premium Cheddar",
+                "burger5_desc": "Hambúrguer, cebola caramelizada, cheddar e bacon crispy",
+                "burger6_name": "Premium Bacon BBQ",
+                "burger6_desc": "Hambúrguer, maionese da casa, BBQ da casa, cebola caramelizada e bacon em fatias",
+
+                // Itens do menu - Acompanhamentos
+                "side1_name": "Fritas",
+                "side1_desc": "Porção de batatas fritas crocantes",
+                "side2_name": "Arroz",
+                "side2_desc": "Porção de arroz blanco",
+                "side3_name": "Feijão",
+                "side3_desc": "Porção de feijão",
+                "side4_name": "Molho Queijo da Casa",
+                "side4_desc": "Molho especial de queijo",
+
+                // Itens do menu - Sobremesas
+                "dessert1_name": "Açaí Supreme",
+                "dessert1_desc": "Tigela de açaí com frutas e granola",
+                "dessert1_extra": "Tigela XL: 14,00 € | Adicionais: 0,80 €",
+                "dessert2_name": "Sorvetes",
+                "dessert2_desc": "Taça com 3 bolas de sorvete",
+                "dessert3_name": "Mousse de Chocolate",
+                "dessert3_desc": "Mousse de chocolate cremosa (140g)"
+            },
+            en: {
+                // Interface
+                "restaurant_label": "Restaurant",
+                "search_placeholder": "Search the menu",
+                "category_all": "All",
+                "category_popular": "Most Popular",
+                "category_dishes": "Main Dishes",
+                "category_tacos": "Tacos",
+                "category_burgers": "Burgers",
+                "category_desserts": "Desserts",
+                "video_subtitle": "Authentic flavor at your table",
+                "popular_badge": "Most popular",
+                "vegetarian_badge": "Vegetarian",
+                "no_results_title": "No results found",
+                "no_results_text": "Try different keywords",
+
+                // Seções
+                "section_dishes": "Main Dishes",
+                "section_tacos": "Tacos",
+                "section_burgers": "Burgers",
+                "section_sides": "Side Dishes",
+                "section_desserts": "Desserts",
+
+                // Navegação
+                "nav_home": "Home",
+                "nav_search": "Search",
+                "nav_instagram": "Instagram",
+                "nav_contact": "Contact",
+
+                // Itens do menu - Pratos
+                "dish1_name": "Picanha Grill Na Chapa",
+                "dish1_desc": "200g of grilled beef, served with fries and salad",
+                "dish2_name": "Maminha Grill Na Chapa",
+                "dish2_desc": "200g of grilled beef, served with fries and salad",
+                "dish3_name": "Grilled Chicken Fillet",
+                "dish3_desc": "150g of grilled chicken, served with fries and salad",
+                "dish5_name": "Chicken Wings",
+                "dish5_desc": "Marinated and fried chicken wings, served with fries and sauce",
+                "dish6_name": "Premium Na Chapa",
+                "dish6_desc": "400g of high-quality grilled picanha",
+                "dish7_name": "Premium Maminha",
+                "dish7_desc": "400g of high-quality grilled maminha",
+                "dish8_name": "Premium Mix",
+                "dish8_desc": "100g picanha, 100g maminha, 100g chicken and 100g sausage",
+
+                // Itens do menu - Tacos
+                "taco1_name": "Ground Beef Tacos",
+                "taco1_desc": "Ground beef, cheese, special sauce and fries",
+                "taco2_name": "Chicken Tacos",
+                "taco2_desc": "Chicken, cheese, special sauce and fries",
+                "taco3_name": "Special Picanha Tacos",
+                "taco3_desc": "Picanha, special cheese and house sauce",
+
+                // Itens do menu - Hambúrgueres
+                "burger1_name": "Artisanal Burger Maison",
+                "burger1_desc": "Artisanal burger, gorgonzola cheese, tomato and lettuce",
+                "burger2_name": "Pork Sandwich Maison",
+                "burger2_desc": "Artisanal bread, pork, cheese and special sauce",
+                "burger3_name": "Vegetarian Burger",
+                "burger3_desc": "Vegetable burger, cheese, tomato and special sauce",
+                "burger4_name": "Kids Menu",
+                "burger4_desc": "Burger or Nuggets, fries and drink",
+                "burger5_name": "Premium Cheddar",
+                "burger5_desc": "Burger, caramelized onion, cheddar and crispy bacon",
+                "burger6_name": "Premium Bacon BBQ",
+                "burger6_desc": "Burger, house mayonnaise, house BBQ sauce, caramelized onion and sliced bacon",
+
+                // Itens do menu - Acompanhamentos
+                "side1_name": "Fries",
+                "side1_desc": "Portion of crispy fries",
+                "side2_name": "Rice",
+                "side2_desc": "Portion of white rice",
+                "side3_name": "Beans",
+                "side3_desc": "Portion of beans",
+                "side4_name": "House Cheese Sauce",
+                "side4_desc": "Special cheese sauce",
+
+                // Itens do menu - Sobremesas
+                "dessert1_name": "Açaí Supreme",
+                "dessert1_desc": "Bowl of açaí with fruits and granola",
+                "dessert1_extra": "XL Bowl: 14.00 € | Extras: 0.80 €",
+                "dessert2_name": "Ice Cream",
+                "dessert2_desc": "Cup with 3 scoops of ice cream",
+                "dessert3_name": "Chocolate Mousse",
+                "dessert3_desc": "Creamy chocolate mousse (140g)"
+            },
+            fr: {
+                // Interface
+                "restaurant_label": "Restaurant",
+                "search_placeholder": "Rechercher dans le menu",
+                "category_all": "Tous",
+                "category_popular": "Plus Populaires",
+                "category_dishes": "Plats Principaux",
+                "category_tacos": "Tacos",
+                "category_burgers": "Hamburgers",
+                "category_desserts": "Desserts",
+                "video_subtitle": "Saveur authentique à votre table",
+                "popular_badge": "Plus populaire",
+                "vegetarian_badge": "Végétarien",
+                "no_results_title": "Aucun résultat trouvé",
+                "no_results_text": "Essayez d'autres mots-clés",
+
+                // Seções
+                "section_dishes": "Plats Principaux",
+                "section_tacos": "Tacos",
+                "section_burgers": "Hamburgers",
+                "section_sides": "Accompagnements",
+                "section_desserts": "Desserts",
+
+                // Navegação
+                "nav_home": "Accueil",
+                "nav_search": "Rechercher",
+                "nav_instagram": "Instagram",
+                "nav_contact": "Contact",
+
+                // Itens do menu - Pratos
+                "dish1_name": "Picanha Grill Na Chapa",
+                "dish1_desc": "200g de bœuf grillé, servi avec frites et salade",
+                "dish2_name": "Maminha Grill Na Chapa",
+                "dish2_desc": "200g de bœuf grillé, servi avec frites et salade",
+                "dish3_name": "Filet de Poulet",
+                "dish3_desc": "150g de poulet grillé, servi avec frites et salade",
+                "dish5_name": "Chicken Wings",
+                "dish5_desc": "Ailes de poulet marinées et frites, servies avec frites et sauce",
+                "dish6_name": "Premium Na Chapa",
+                "dish6_desc": "400g de picanha grillée de haute qualité",
+                "dish7_name": "Premium Maminha",
+                "dish7_desc": "400g de maminha grillée de haute qualité",
+                "dish8_name": "Premium Mixte",
+                "dish8_desc": "100g picanha, 100g maminha, 100g poulet et 100g saucisse",
+
+                // Itens do menu - Tacos
+                "taco1_name": "Tacos Viande Hachée",
+                "taco1_desc": "Viande hachée, fromage, sauce spéciale et frites",
+                "taco2_name": "Tacos Poulet",
+                "taco2_desc": "Poulet, fromage, sauce spéciale et frites",
+                "taco3_name": "Special Tacos Picanha",
+                "taco3_desc": "Picanha, fromage spécial et sauce maison",
+
+                // Itens do menu - Hambúrgueres
+                "burger1_name": "Hamburger Artisanal Maison",
+                "burger1_desc": "Hamburger artisanal, fromage gorgonzola, tomate et laitue",
+                "burger2_name": "Bifana Maison",
+                "burger2_desc": "Pain artisanal, porc, fromage et sauce spéciale",
+                "burger3_name": "Hamburger Végétarien",
+                "burger3_desc": "Hamburger de légumes, fromage, tomate et sauce spéciale",
+                "burger4_name": "Menu Enfant",
+                "burger4_desc": "Hamburger ou Nuggets, frites et boisson",
+                "burger5_name": "Premium Cheddar",
+                "burger5_desc": "Hamburger, oignon caramélisé, cheddar et bacon croustillant",
+                "burger6_name": "Premium Bacon BBQ",
+                "burger6_desc": "Hamburger, mayonnaise maison, sauce BBQ maison, oignon caramélisé et bacon en tranches",
+
+                // Itens do menu - Acompanhamentos
+                "side1_name": "Frites",
+                "side1_desc": "Portion de frites croustillantes",
+                "side2_name": "Riz",
+                "side2_desc": "Portion de riz blanc",
+                "side3_name": "Haricots",
+                "side3_desc": "Portion d'haricots",
+                "side4_name": "Sauce Fromage Maison",
+                "side4_desc": "Sauce fromage spéciale",
+
+                // Itens do menu - Sobremesas
+                "dessert1_name": "Açaí Supreme",
+                "dessert1_desc": "Bol d'açaí avec fruits et granola",
+                "dessert1_extra": "Bol XL: 14,00 € | Suppléments: 0,80 €",
+                "dessert2_name": "Glaces",
+                "dessert2_desc": "Coupe avec 3 boules de glace",
+                "dessert3_name": "Mousse au Chocolat",
+                "dessert3_desc": "Mousse au chocolat crémeuse (140g)"
+            },
+            de: {
+                // Interface
+                "restaurant_label": "Restaurant",
+                "search_placeholder": "Menü durchsuchen",
+                "category_all": "Alle",
+                "category_popular": "Beliebteste",
+                "category_dishes": "Hauptgerichte",
+                "category_tacos": "Tacos",
+                "category_burgers": "Burger",
+                "category_desserts": "Nachspeisen",
+                "video_subtitle": "Authentischer Geschmack an Ihrem Tisch",
+                "popular_badge": "Beliebteste",
+                "vegetarian_badge": "Vegetarisch",
+                "no_results_title": "Keine Ergebnisse gefunden",
+                "no_results_text": "Versuchen Sie andere Schlüsselwörter",
+
+                // Seções
+                "section_dishes": "Hauptgerichte",
+                "section_tacos": "Tacos",
+                "section_burgers": "Burger",
+                "section_sides": "Beilagen",
+                "section_desserts": "Nachspeisen",
+
+                // Navegação
+                "nav_home": "Startseite",
+                "nav_search": "Suchen",
+                "nav_instagram": "Instagram",
+                "nav_contact": "Kontakt",
+
+                // Itens do menu - Pratos
+                "dish1_name": "Picanha Grill Na Chapa",
+                "dish1_desc": "200g gegrilltes Rindfleisch, serviert mit Pommes und Salat",
+                "dish2_name": "Maminha Grill Na Chapa",
+                "dish2_desc": "200g gegrilltes Rindfleisch, serviert mit Pommes und Salat",
+                "dish3_name": "Hähnchenfilet",
+                "dish3_desc": "150g gegrilltes Hähnchen, serviert mit Pommes und Salat",
+                "dish5_name": "Chicken Wings",
+                "dish5_desc": "Marinierte und frittierte Hähnchenflügel, serviert mit Pommes und Sauce",
+                "dish6_name": "Premium Na Chapa",
+                "dish6_desc": "400g hochwertige gegrillte Picanha",
+                "dish7_name": "Premium Maminha",
+                "dish7_desc": "400g hochwertige gegrillte Maminha",
+                "dish8_name": "Premium Mix",
+                "dish8_desc": "100g Picanha, 100g Maminha, 100g Hähnchen und 100g Wurst",
+
+                // Itens do menu - Tacos
+                "taco1_name": "Hackfleisch Tacos",
+                "taco1_desc": "Hackfleisch, Käse, spezielle Sauce und Pommes",
+                "taco2_name": "Hähnchen Tacos",
+                "taco2_desc": "Hähnchen, Käse, spezielle Sauce und Pommes",
+                "taco3_name": "Special Picanha Tacos",
+                "taco3_desc": "Picanha, spezieller Käse und hausgemachte Sauce",
+
+                // Itens do menu - Hambúrgueres
+                "burger1_name": "Artisanal Burger Maison",
+                "burger1_desc": "Artisanaler Burger, Gorgonzola-Käse, Tomate und Salat",
+                "burger2_name": "Schweinefleisch-Sandwich Maison",
+                "burger2_desc": "Artisanales Brot, Schweinefleisch, Käse und spezielle Sauce",
+                "burger3_name": "Vegetarischer Burger",
+                "burger3_desc": "Gemüseburger, Käse, Tomate und spezielle Sauce",
+                "burger4_name": "Kinder-Menü",
+                "burger4_desc": "Burger oder Nuggets, Pommes und Getränk",
+                "burger5_name": "Premium Cheddar",
+                "burger5_desc": "Burger, karamellisierte Zwiebeln, Cheddar und knuspriger Speck",
+                "burger6_name": "Premium Bacon BBQ",
+                "burger6_desc": "Burger, hausgemachte Mayonnaise, hausgemachte BBQ-Sauce, karamellisierte Zwiebeln und Scheibenspeck",
+
+                // Itens do menu - Acompanhamentos
+                "side1_name": "Pommes",
+                "side1_desc": "Portion knusprige Pommes",
+                "side2_name": "Reis",
+                "side2_desc": "Portion weißer Reis",
+                "side3_name": "Bohnen",
+                "side3_desc": "Portion Bohnen",
+                "side4_name": "Hausgemachte Käsesauce",
+                "side4_desc": "Spezielle Käsesauce",
+
+                // Itens do menu - Sobremesas
+                "dessert1_name": "Açaí Supreme",
+                "dessert1_desc": "Schüssel mit Açaí, Früchten und Granola",
+                "dessert1_extra": "XL-Schüssel: 14,00 € | Extras: 0,80 €",
+                "dessert2_name": "Eiscreme",
+                "dessert2_desc": "Becher mit 3 Kugeln Eis",
+                "dessert3_name": "Schokoladenmousse",
+                "dessert3_desc": "Cremige Schokoladenmousse (140g)"
+            },
+            lu: {
+                // Interface
+                "restaurant_label": "Restaurant",
+                "search_placeholder": "Sicht am Menu",
+                "category_all": "All",
+                "category_popular": "Méi Beléift",
+                "category_dishes": "Haaptcoursen",
+                "category_tacos": "Tacos",
+                "category_burgers": "Hamburgers",
+                "category_desserts": "Desserten",
+                "video_subtitle": "Authentche Geschmaack op ärem Dësch",
+                "popular_badge": "Méi beléift",
+                "vegetarian_badge": "Vegetaresch",
+                "no_results_title": "Keng Resultater fonnt",
+                "no_results_text": "Probéiert aner Stichwierder",
+
+                // Seções
+                "section_dishes": "Haaptcoursen",
+                "section_tacos": "Tacos",
+                "section_burgers": "Hamburgers",
+                "section_sides": "Bäilagen",
+                "section_desserts": "Desserten",
+
+                // Navegação
+                "nav_home": "Home",
+                "nav_search": "Sichen",
+                "nav_instagram": "Instagram",
+                "nav_contact": "Kontakt",
+
+                // Itens do menu - Pratos
+                "dish1_name": "Picanha Grill Na Chapa",
+                "dish1_desc": "200g gegrillt Rëndfleesch, servéiert mat Fritten a Salat",
+                "dish2_name": "Maminha Grill Na Chapa",
+                "dish2_desc": "200g gegrillt Rëndfleesch, servéiert mat Fritten a Salat",
+                "dish3_name": "Hiechenfilet",
+                "dish3_desc": "150g gegrillt Hiechen, servéiert mat Fritten a Salat",
+                "dish5_name": "Chicken Wings",
+                "dish5_desc": "Marinéiert a frittéiert Hiecheflillek, servéiert mat Fritten a Zooss",
+                "dish6_name": "Premium Na Chapa",
+                "dish6_desc": "400g héichwäereg gegrillt Picanha",
+                "dish7_name": "Premium Maminha",
+                "dish7_desc": "400g héichwäereg gegrillt Maminha",
+                "dish8_name": "Premium Mix",
+                "dish8_desc": "100g Picanha, 100g Maminha, 100g Hiechen an 100g Wurscht",
+
+                // Itens do menu - Tacos
+                "taco1_name": "Hackfleesch Tacos",
+                "taco1_desc": "Hackfleesch, Kéis, speziell Zooss a Fritten",
+                "taco2_name": "Hiechen Tacos",
+                "taco2_desc": "Hiechen, Kéis, speziell Zooss a Fritten",
+                "taco3_name": "Special Picanha Tacos",
+                "taco3_desc": "Picanha, speziellen Kéis a hausgemachte Zooss",
+
+                // Itens do menu - Hambúrgueres
+                "burger1_name": "Artisanal Burger Maison",
+                "burger1_desc": "Artisanalen Burger, Gorgonzola-Kéis, Tomat a Salat",
+                "burger2_name": "Schwéngfleesch-Sandwich Maison",
+                "burger2_desc": "Artisanalt Brout, Schwéngfleesch, Kéis a speziell Zooss",
+                "burger3_name": "Vegetaresche Burger",
+                "burger3_desc": "Geméisburger, Kéis, Tomat a speziell Zooss",
+                "burger4_name": "Kanner-Menu",
+                "burger4_desc": "Burger oder Nuggets, Fritten a Gedrénk",
+                "burger5_name": "Premium Cheddar",
+                "burger5_desc": "Burger, karamelliséiert Zwiebelen, Cheddar a knaspege Speck",
+                "burger6_name": "Premium Bacon BBQ",
+                "burger6_desc": "Burger, hausgemachte Majo, hausgemachte BBQ-Zooss, karamelliséiert Zwiebelen a Speck a Schnëtter",
+
+                // Itens do menu - Acompanhamentos
+                "side1_name": "Fritten",
+                "side1_desc": "Portioun knaspege Fritten",
+                "side2_name": "Räis",
+                "side2_desc": "Portioun wäisse Räis",
+                "side3_name": "Bounen",
+                "side3_desc": "Portioun Bounen",
+                "side4_name": "Hausgemachte Kéiszooss",
+                "side4_desc": "Speziell Kéiszooss",
+
+                // Itens do menu - Sobremesas
+                "dessert1_name": "Açaí Supreme",
+                "dessert1_desc": "Schüssel mat Açaí, Uebst a Granola",
+                "dessert1_extra": "XL-Schüssel: 14,00 € | Extras: 0,80 €",
+                "dessert2_name": "Glace",
+                "dessert2_desc": "Becher mat 3 Kugele Glace",
+                "dessert3_name": "Schockelademousse",
+                "dessert3_desc": "Cremeg Schockelademousse (140g)"
+            }
+        };
+
+        // Funcionalidade das categorias
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.category-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                const category = this.getAttribute('data-category');
+                filterMenu(category);
+            });
+        });
+
+        // Função para filtrar o menu
+        function filterMenu(category) {
+            const allItems = document.querySelectorAll('.menu-card');
+            const allSections = document.querySelectorAll('.category-section');
+
+            // Remover mensagem de nenhum resultado se existir
+            const noResults = document.getElementById('noResults');
+            if (noResults) {
+                noResults.remove();
+            }
+
+            if (category === 'all') {
+                allItems.forEach(item => {
+                    item.style.display = 'block';
+                });
+                allSections.forEach(section => {
+                    section.style.display = 'block';
+                });
+            } else if (category === 'popular') {
+                // Primeiro, mostrar todas as seções
+                allSections.forEach(section => {
+                    section.style.display = 'block';
+                });
+
+                // Agora filtrar apenas os itens populares
+                let foundPopular = false;
+                allItems.forEach(item => {
+                    const tags = item.getAttribute('data-tags');
+                    if (tags.includes('popular')) {
+                        item.style.display = 'block';
+                        foundPopular = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Se não encontrou itens populares, mostrar mensagem
+                if (!foundPopular) {
+                    const menuContent = document.getElementById('menuContent');
+                    const noResults = document.createElement('div');
+                    noResults.id = 'noResults';
+                    noResults.className = 'text-center py-10 px-4';
+                    noResults.innerHTML = `
+                            <i class="fas fa-fire fa-3x text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-600" data-i18n="no_results_title">Nenhum item popular encontrado</h3>
+                            <p class="text-gray-500" data-i18n="no_results_text">Volte em breve para ver nossos mais vendidos!</p>
+                        `;
+                    menuContent.appendChild(noResults);
+
+                    // Traduzir mensagem
+                    if (currentLang && translations[currentLang]) {
+                        const title = noResults.querySelector('[data-i18n="no_results_title"]');
+                        const text = noResults.querySelector('[data-i18n="no_results_text"]');
+
+                        if (title && translations[currentLang]["no_results_title"]) {
+                            title.textContent = translations[currentLang]["no_results_title"];
+                        }
+
+                        if (text && translations[currentLang]["no_results_text"]) {
+                            text.textContent = translations[currentLang]["no_results_text"];
+                        }
+                    }
+                }
+            } else {
+                allSections.forEach(section => {
+                    if (section.getAttribute('data-category') === category) {
+                        section.style.display = 'block';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+
+                allItems.forEach(item => {
+                    item.style.display = 'block';
+                });
+            }
+        }
+
+        // Funcionalidade de busca
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase().trim();
+
+            if (searchTerm === '') {
+                // Se a busca estiver vazia, mostrar todos os itens
+                document.querySelectorAll('.menu-card').forEach(card => {
+                    card.style.display = 'block';
+
+                    // Remover destaque de texto
+                    const nameElement = card.querySelector('h3');
+                    const descElement = card.querySelector('p');
+                    nameElement.innerHTML = nameElement.textContent;
+                    descElement.innerHTML = descElement.textContent;
+                });
+
+                document.querySelectorAll('.category-section').forEach(section => {
+                    section.style.display = 'block';
+                });
+
+                // Remover mensagem de nenhum resultado se existir
+                const noResults = document.getElementById('noResults');
+                if (noResults) {
+                    noResults.remove();
+                }
+
+                return;
+            }
+
+            // Esconder todas as seções inicialmente
+            document.querySelectorAll('.category-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Procurar itens que correspondam à busca
+            let foundItems = false;
+
+            document.querySelectorAll('.menu-card').forEach(card => {
+                const searchData = card.getAttribute('data-search').toLowerCase();
+                const nameElement = card.querySelector('h3');
+                const descElement = card.querySelector('p');
+                const nameText = nameElement.textContent.toLowerCase();
+                const descText = descElement.textContent.toLowerCase();
+
+                // Remover destaque anterior
+                nameElement.innerHTML = nameElement.textContent;
+                descElement.innerHTML = descElement.textContent;
+
+                if (searchData.includes(searchTerm) || nameText.includes(searchTerm) || descText.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    foundItems = true;
+
+                    // Mostrar a seção deste item
+                    const section = card.closest('.category-section');
+                    if (section) {
+                        section.style.display = 'block';
+                    }
+
+                    // Adicionar destaque ao texto
+                    const regex = new RegExp(`(${searchTerm})`, 'gi');
+                    nameElement.innerHTML = nameElement.textContent.replace(regex, '<span class="search-highlight">$1</span>');
+                    descElement.innerHTML = descElement.textContent.replace(regex, '<span class="search-highlight">$1</span>');
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Se não encontrar nada, mostrar mensagem
+            if (!foundItems) {
+                const menuContent = document.getElementById('menuContent');
+                if (!document.getElementById('noResults')) {
+                    const noResults = document.createElement('div');
+                    noResults.id = 'noResults';
+                    noResults.className = 'text-center py-10 px-4';
+                    noResults.innerHTML = `
+                            <i class="fas fa-search fa-3x text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-600" data-i18n="no_results_title">Nenhum resultado encontrado</h3>
+                            <p class="text-gray-500" data-i18n="no_results_text">Tente usar palavras-chave diferentes</p>
+                        `;
+                    menuContent.appendChild(noResults);
+
+                    // Traduzir mensagem de nenhum resultado
+                    if (currentLang && translations[currentLang]) {
+                        const title = noResults.querySelector('[data-i18n="no_results_title"]');
+                        const text = noResults.querySelector('[data-i18n="no_results_text"]');
+
+                        if (title && translations[currentLang]["no_results_title"]) {
+                            title.textContent = translations[currentLang]["no_results_title"];
+                        }
+
+                        if (text && translations[currentLang]["no_results_text"]) {
+                            text.textContent = translations[currentLang]["no_results_text"];
+                        }
+                    }
+                }
+            } else {
+                // Remover mensagem de nenhum resultado se existir
+                const noResults = document.getElementById('noResults');
+                if (noResults) {
+                    noResults.remove();
+                }
+            }
+        });
+
+        // Funcionalidade de troca de idioma
+        const languageSelect = document.getElementById('languageSelector');
+        let currentLang = 'pt';
+
+        languageSelect.addEventListener('change', function () {
+            const lang = this.value;
+            currentLang = lang;
+
+            // Atualizar a bandeira no combobox
+            const flagIcons = {
+                'pt': '🇧🇷',
+                'en': '🇬🇧',
+                'fr': '🇫🇷',
+                'de': '🇩🇪',
+                'lu': '🇱🇺'
+            };
+
+            document.querySelector('.flag-icon').textContent = flagIcons[lang];
+
+            changeLanguage(lang);
+        });
+
+        function changeLanguage(lang) {
+            // Atualiza todos os elementos com atributo data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    if (el.placeholder !== undefined) {
+                        el.placeholder = translations[lang][key];
+                    } else {
+                        el.textContent = translations[lang][key];
+                    }
+                }
+            });
+        }
+
+        // Funcionalidade da navegação inferior
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function (e) {
+                if (this.id !== 'searchNav') {
+                    e.preventDefault();
+                }
+
+                document.querySelectorAll('.nav-link').forEach(nav => {
+                    nav.classList.remove('active');
+                });
+
+                this.classList.add('active');
+
+                // Foco na busca quando clicar em "Buscar"
+                if (this.id === 'searchNav') {
+                    e.preventDefault();
+                    document.getElementById('searchInput').focus();
+                }
+            });
+        });
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function () {
+            // Garantir que todos os itens estejam visíveis inicialmente
+            filterMenu('all');
+
+            // Configurar o idioma inicial
+            changeLanguage('pt');
+        });
+    </script>
+</body>
+</html>
