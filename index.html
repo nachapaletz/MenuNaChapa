@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Na Chapa - Cardápio Digital</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,71 +26,24 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-        @supports (-webkit-touch-callout: none) {
-            .fixed {
-                position: fixed;
-                bottom: env(safe-area-inset-bottom, 0px);
-                padding-bottom: env(safe-area-inset-bottom, 0px);
-            }
+        :root {
+            --vh: 1vh;
         }
 
-        /* Garantir que a navbar fique sempre visível e acima de outros elementos */
-        .fixed {
-            z-index: 1000;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-        }
-
-        /* Espaço extra no final da página para compensar a navbar fixa */
-        body {
-            padding-bottom: 80px;
-        }
-
-        /* Correção específica para a bandeira no combobox */
-        .language-select-wrapper {
-            position: relative;
-            display: inline-block;
-            min-width: 120px; /* Largura mínima para evitar sobreposição */
-        }
-
-        .flag-icon {
-            position: absolute;
-            left: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            z-index: 10; /* Garantir que fique acima do select */
-        }
-
-        .language-select {
-            padding-left: 30px !important; /* Espaço suficiente para a bandeira */
-            padding-right: 30px !important; /* Espaço para a seta */
-            min-width: 120px;
-        }
-
-        /* Melhorar a aparência do select em dispositivos móveis */
-        @media (max-width: 768px) {
-            .language-select-wrapper {
-                min-width: 110px;
-            }
-
-            .language-select {
-                font-size: 14px;
-                padding: 6px 25px 6px 28px !important;
-            }
-
-            .flag-icon {
-                left: 6px;
-                font-size: 14px;
-            }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f8f8f8;
-            padding-bottom: 80px;
+            min-height: 100vh;
+            min-height: calc(var(--vh, 1vh) * 100);
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: calc(80px + env(safe-area-inset-bottom));
         }
 
         .menu-card {
@@ -143,24 +96,27 @@
         /* Estilização do combobox de idiomas */
         .language-select-wrapper {
             position: relative;
-            display: inline-flex;
-            align-items: center;
-            min-width: 130px;
+            display: inline-block;
+            min-width: 150px;
         }
 
         .language-select {
-            background: transparent;
-            border: 1px solid #D89D3B;
-            border-radius: 6px;
-            color: white;
-            padding: 6px 30px 6px 32px;
-            font-size: 14px;
-            cursor: pointer;
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
+            background: transparent;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position-x: 95%;
+            background-position-y: 50%;
+            padding-right: 2.5rem;
+            padding-left: 2.5rem;
+            border: 1px solid #D89D3B;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
             width: 100%;
-            min-width: 120px;
+            min-width: 140px;
         }
 
             .language-select option {
@@ -169,26 +125,13 @@
                 padding: 8px;
             }
 
-        .language-select-wrapper::after {
-            content: "▼";
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: white;
-            font-size: 10px;
-            pointer-events: none;
-            z-index: 2;
-        }
-
         .flag-icon {
             position: absolute;
-            left: 10px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
             pointer-events: none;
-            z-index: 2;
-            font-size: 16px;
+            z-index: 10;
         }
 
         .search-highlight {
@@ -204,11 +147,87 @@
         .nav-link:not(.active) {
             color: #A0AEC0;
         }
+
+        /* Correções para iPhone Safari */
+        @supports (-webkit-touch-callout: none) {
+            .fixed {
+                position: fixed;
+                bottom: env(safe-area-inset-bottom, 0px);
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
+        }
+
+        .fixed {
+            z-index: 1000;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #000000;
+        }
+
+        .bg-nachapa {
+            background-color: #000000 !important;
+        }
+
+        @media (max-width: 768px) {
+            .language-select-wrapper {
+                min-width: 130px;
+            }
+
+            .language-select {
+                font-size: 14px;
+                padding-left: 2.2rem;
+                padding-right: 2.2rem;
+            }
+
+            .flag-icon {
+                left: 10px;
+                font-size: 16px;
+            }
+        }
+
+        /* Estilo para imagens dos pratos */
+        .dish-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px 8px 0 0;
+            color: #999;
+            font-size: 14px;
+        }
+
+        /* Loading para imagens */
+        .image-loading {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-100">
     <!-- Top bar -->
-    <div class="bg-nachapa py-3 px-4 flex justify-between items-center shadow-sm">
+    <div class="bg-nachapa py-3 px-4 flex justify-between items-center shadow-sm sticky top-0 z-50 safe-area-top">
         <div class="flex items-center">
             <div class="h-10 w-10 rounded-full overflow-hidden bg-white flex items-center justify-center mr-2">
                 <img src="logo-nachapa.jpg" alt="Na Chapa Logo" class="h-10 w-10 object-cover">
@@ -285,7 +304,8 @@
                 <!-- Picanha Grill Na Chapa -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="popular dishes carne" data-search="Picanha Grill Na Chapa carne bovina fritas salada">
                     <div class="relative">
-                        <div class="w-full h-40 bg-gradient-to-r from-orange-100 to-orange-200 flex items-center justify-center">
+                        <img src="pratos/picanha-grill.jpg" alt="Picanha Grill Na Chapa" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
                             <i class="fas fa-drumstick-bite text-4xl text-orange-400"></i>
                         </div>
                         <span class="absolute top-2 left-2 bg-grill text-white text-xs font-bold px-2 py-1 rounded" data-i18n="popular_badge">Mais vendido</span>
@@ -301,8 +321,11 @@
 
                 <!-- Maminha Grill Na Chapa -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="dishes carne" data-search="Maminha Grill Na Chapa carne bovina fritas salada">
-                    <div class="w-full h-40 bg-gradient-to-r from-red-100 to-red-200 flex items-center justify-center">
-                        <i class="fas fa-drumstick-bite text-4xl text-red-400"></i>
+                    <div class="relative">
+                        <img src="pratos/maminha-grill.jpg" alt="Maminha Grill Na Chapa" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-drumstick-bite text-4xl text-red-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -315,8 +338,11 @@
 
                 <!-- Filé de Frango -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="dishes frango" data-search="Filé de Frango frango grelhado fritas salada">
-                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
-                        <i class="fas fa-drumstick-bite text-4xl text-yellow-500"></i>
+                    <div class="relative">
+                        <img src="pratos/file-frango.jpg" alt="Filé de Frango" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-drumstick-bite text-4xl text-yellow-500"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -329,8 +355,11 @@
 
                 <!-- Chicken Wings -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="dishes frango" data-search="Chicken Wings asas de frango fritas molho">
-                    <div class="w-full h-40 bg-gradient-to-r from-red-100 to-red-200 flex items-center justify-center">
-                        <i class="fas fa-drumstick-bite text-4xl text-red-400"></i>
+                    <div class="relative">
+                        <img src="pratos/chicken-wings.jpg" alt="Chicken Wings" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-drumstick-bite text-4xl text-red-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -344,7 +373,8 @@
                 <!-- Premium Na Chapa -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="popular dishes premium carne" data-search="Premium Na Chapa picanha 400g">
                     <div class="relative">
-                        <div class="w-full h-40 bg-gradient-to-r from-purple-100 to-purple-200 flex items-center justify-center">
+                        <img src="pratos/premium-picanha.jpg" alt="Premium Na Chapa" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
                             <i class="fas fa-crown text-4xl text-purple-400"></i>
                         </div>
                         <span class="absolute top-2 left-2 bg-grill text-white text-xs font-bold px-2 py-1 rounded" data-i18n="popular_badge">Mais vendido</span>
@@ -360,8 +390,11 @@
 
                 <!-- Premium Maminha -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="dishes premium carne" data-search="Premium Maminha maminha 400g">
-                    <div class="w-full h-40 bg-gradient-to-r from-purple-100 to-purple-200 flex items-center justify-center">
-                        <i class="fas fa-crown text-4xl text-purple-400"></i>
+                    <div class="relative">
+                        <img src="pratos/premium-maminha.jpg" alt="Premium Maminha" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-crown text-4xl text-purple-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -375,7 +408,8 @@
                 <!-- Premium Mixte -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="popular dishes premium carne mista" data-search="Premium Mixte picanha maminha frango linguiça">
                     <div class="relative">
-                        <div class="w-full h-40 bg-gradient-to-r from-purple-100 to-purple-200 flex items-center justify-center">
+                        <img src="pratos/premium-mixte.jpg" alt="Premium Mixte" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
                             <i class="fas fa-crown text-4xl text-purple-400"></i>
                         </div>
                         <span class="absolute top-2 left-2 bg-grill text-white text-xs font-bold px-2 py-1 rounded" data-i18n="popular_badge">Mais vendido</span>
@@ -397,8 +431,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Tacos Carne Moída -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="tacos carne" data-search="Tacos Carne Moída queijo molho fritas">
-                    <div class="w-full h-40 bg-gradient-to-r from-orange-100 to-orange-200 flex items-center justify-center">
-                        <i class="fas fa-utensils text-4xl text-orange-400"></i>
+                    <div class="relative">
+                        <img src="tacos/tacos-carne.jpg" alt="Tacos Carne Moída" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-utensils text-4xl text-orange-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -411,8 +448,11 @@
 
                 <!-- Tacos Frango -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="tacos frango" data-search="Tacos Frango queijo molho fritas">
-                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
-                        <i class="fas fa-utensils text-4xl text-yellow-400"></i>
+                    <div class="relative">
+                        <img src="tacos/tacos-frango.jpg" alt="Tacos Frango" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-utensils text-4xl text-yellow-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -426,7 +466,8 @@
                 <!-- Special Tacos Picanha -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="popular tacos premium" data-search="Special Tacos Picanha queijo molho">
                     <div class="relative">
-                        <div class="w-full h-40 bg-gradient-to-r from-red-100 to-red-200 flex items-center justify-center">
+                        <img src="tacos/tacos-picanha.jpg" alt="Special Tacos Picanha" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
                             <i class="fas fa-utensils text-4xl text-red-400"></i>
                         </div>
                         <span class="absolute top-2 left-2 bg-grill text-white text-xs font-bold px-2 py-1 rounded" data-i18n="popular_badge">Mais vendido</span>
@@ -448,8 +489,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Hambúrguer Artesanal Maison -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="burgers carne" data-search="Hambúrguer Artesanal Maison gorgonzola">
-                    <div class="w-full h-40 bg-gradient-to-r from-orange-100 to-orange-200 flex items-center justify-center">
-                        <i class="fas fa-hamburger text-4xl text-orange-400"></i>
+                    <div class="relative">
+                        <img src="burgers/burger-maison.jpg" alt="Hambúrguer Artesanal Maison" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-hamburger text-4xl text-orange-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -463,7 +507,8 @@
                 <!-- Premium Cheddar -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="popular burgers premium" data-search="Premium Cheddar hambúrguer cebola caramelizada bacon crispy">
                     <div class="relative">
-                        <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
+                        <img src="burgers/burger-cheddar.jpg" alt="Premium Cheddar" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
                             <i class="fas fa-hamburger text-4xl text-yellow-400"></i>
                         </div>
                         <span class="absolute top-2 left-2 bg-grill text-white text-xs font-bold px-2 py-1 rounded" data-i18n="popular_badge">Mais vendido</span>
@@ -479,8 +524,11 @@
 
                 <!-- Premium Bacon BBQ -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="burgers premium" data-search="Premium Bacon BBQ hambúrguer maionese bbq cebola caramelizada bacon">
-                    <div class="w-full h-40 bg-gradient-to-r from-red-100 to-red-200 flex items-center justify-center">
-                        <i class="fas fa-hamburger text-4xl text-red-400"></i>
+                    <div class="relative">
+                        <img src="burgers/burger-bbq.jpg" alt="Premium Bacon BBQ" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-hamburger text-4xl text-red-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -493,8 +541,11 @@
 
                 <!-- Bifana Maison -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="burgers porco" data-search="Bifana Maison porco queijo molho">
-                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
-                        <i class="fas fa-hamburger text-4xl text-yellow-400"></i>
+                    <div class="relative">
+                        <img src="burgers/bifana-maison.jpg" alt="Bifana Maison" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-hamburger text-4xl text-yellow-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -508,7 +559,8 @@
                 <!-- Hambúrguer Vegetariano -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="burgers vegetariano" data-search="Hambúrguer Vegetariano legumes molho">
                     <div class="relative">
-                        <div class="w-full h-40 bg-gradient-to-r from-green-100 to-green-200 flex items-center justify-center">
+                        <img src="burgers/burger-vegetariano.jpg" alt="Hambúrguer Vegetariano" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
                             <i class="fas fa-hamburger text-4xl text-green-400"></i>
                         </div>
                         <span class="absolute top-2 left-2 bg-snack text-white text-xs font-bold px-2 py-1 rounded" data-i18n="vegetarian_badge">Vegetariano</span>
@@ -524,8 +576,11 @@
 
                 <!-- Menu Infantil -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="burgers infantil" data-search="Menu Infantil hambúrguer fritas bebida">
-                    <div class="w-full h-40 bg-gradient-to-r from-blue-100 to-blue-200 flex items-center justify-center">
-                        <i class="fas fa-child text-4xl text-blue-400"></i>
+                    <div class="relative">
+                        <img src="burgers/menu-infantil.jpg" alt="Menu Infantil" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-child text-4xl text-blue-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -544,8 +599,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Coca-Cola / Coca-Cola Zero (33cl) -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks refrigerante" data-search="Coca-Cola Coca-Cola Zero 33cl">
-                    <div class="w-full h-40 bg-gradient-to-r from-red-100 to-red-200 flex items-center justify-center">
-                        <i class="fas fa-glass-whiskey text-4xl text-red-400"></i>
+                    <div class="relative">
+                        <img src="bebidas/coca-cola-33cl.jpg" alt="Coca-Cola 33cl" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-glass-whiskey text-4xl text-red-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -557,8 +615,11 @@
 
                 <!-- Sprite / Fanta (33cl) -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks refrigerante" data-search="Sprite Fanta 33cl">
-                    <div class="w-full h-40 bg-gradient-to-r from-green-100 to-green-200 flex items-center justify-center">
-                        <i class="fas fa-glass-whiskey text-4xl text-green-400"></i>
+                    <div class="relative">
+                        <img src="bebidas/sprite-fanta-33cl.jpg" alt="Sprite Fanta 33cl" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-glass-whiskey text-4xl text-green-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -570,8 +631,11 @@
 
                 <!-- Guaraná Antarctica -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks refrigerante" data-search="Guaraná Antarctica">
-                    <div class="w-full h-40 bg-gradient-to-r from-green-100 to-green-200 flex items-center justify-center">
-                        <i class="fas fa-glass-whiskey text-4xl text-green-400"></i>
+                    <div class="relative">
+                        <img src="bebidas/guarana.jpg" alt="Guaraná Antarctica" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-glass-whiskey text-4xl text-green-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -583,8 +647,11 @@
 
                 <!-- Monster Energy -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks energético" data-search="Monster Energy">
-                    <div class="w-full h-40 bg-gradient-to-r from-green-100 to-green-200 flex items-center justify-center">
-                        <i class="fas fa-bolt text-4xl text-green-400"></i>
+                    <div class="relative">
+                        <img src="bebidas/monster.jpg" alt="Monster Energy" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-bolt text-4xl text-green-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -596,8 +663,11 @@
 
                 <!-- Fuze Tea / Multivitamine -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks chá" data-search="Fuze Tea Multivitamine">
-                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
-                        <i class="fas fa-glass-whiskey text-4xl text-yellow-400"></i>
+                    <div class="relative">
+                        <img src="bebidas/fuze-tea.jpg" alt="Fuze Tea" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-glass-whiskey text-4xl text-yellow-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -609,8 +679,11 @@
 
                 <!-- Coca-Cola / Coca-Cola Zero (50cl) -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks refrigerante" data-search="Coca-Cola Coca-Cola Zero 50cl">
-                    <div class="w-full h-40 bg-gradient-to-r from-red-100 to-red-200 flex items-center justify-center">
-                        <i class="fas fa-glass-whiskey text-4xl text-red-400"></i>
+                    <div class="relative">
+                        <img src="bebidas/coca-cola-50cl.jpg" alt="Coca-Cola 50cl" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-glass-whiskey text-4xl text-red-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -622,8 +695,11 @@
 
                 <!-- Sprite / Fanta (50cl) -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks refrigerante" data-search="Sprite Fanta 50cl">
-                    <div class="w-full h-40 bg-gradient-to-r from-green-100 to-green-200 flex items-center justify-center">
-                        <i class="fas fa-glass-whiskey text-4xl text-green-400"></i>
+                    <div class="relative">
+                        <img src="bebidas/sprite-fanta-50cl.jpg" alt="Sprite Fanta 50cl" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-glass-whiskey text-4xl text-green-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -635,8 +711,11 @@
 
                 <!-- Rosport Blue / Viva (50cl) -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks água" data-search="Rosport Blue Viva 50cl">
-                    <div class="w-full h-40 bg-gradient-to-r from-blue-100 to-blue-200 flex items-center justify-center">
-                        <i class="fas fa-tint text-4xl text-blue-400"></i>
+                    <div class="relative">
+                        <img src="bebidas/agua-50cl.jpg" alt="Água 50cl" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-tint text-4xl text-blue-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -648,8 +727,11 @@
 
                 <!-- Café -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks café" data-search="Café">
-                    <div class="w-full h-40 bg-gradient-to-r from-brown-100 to-brown-200 flex items-center justify-center">
-                        <i class="fas fa-coffee text-4xl text-brown-400"></i>
+                    <div class="relative">
+                        <img src="bebidas/cafe.jpg" alt="Café" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-coffee text-4xl text-brown-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -661,8 +743,11 @@
 
                 <!-- Cerveja (33cl) -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks cerveja" data-search="Cerveja 33cl">
-                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
-                        <i class="fas fa-beer text-4xl text-yellow-400"></i>
+                    <div class="relative">
+                        <img src="bebidas/cerveja-33cl.jpg" alt="Cerveja 33cl" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-beer text-4xl text-yellow-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -674,8 +759,11 @@
 
                 <!-- Cerveja (50cl) -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks cerveja" data-search="Cerveja 50cl">
-                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
-                        <i class="fas fa-beer text-4xl text-yellow-400"></i>
+                    <div class="relative">
+                        <img src="bebidas/cerveja-50cl.jpg" alt="Cerveja 50cl" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-beer text-4xl text-yellow-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -687,8 +775,11 @@
 
                 <!-- Caipirinha -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="drinks caipirinha" data-search="Caipirinha">
-                    <div class="w-full h-40 bg-gradient-to-r from-green-100 to-green-200 flex items-center justify-center">
-                        <i class="fas fa-cocktail text-4xl text-green-400"></i>
+                    <div class="relative">
+                        <img src="bebidas/caipirinha.jpg" alt="Caipirinha" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-cocktail text-4xl text-green-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -706,8 +797,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Fritas -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="sides fritas" data-search="Fritas batata">
-                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
-                        <i class="fas fa-potato text-4xl text-yellow-500"></i>
+                    <div class="relative">
+                        <img src="acompanhamentos/fritas.jpg" alt="Fritas" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-potato text-4xl text-yellow-500"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -720,8 +814,11 @@
 
                 <!-- Arroz -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="sides arroz" data-search="Arroz">
-                    <div class="w-full h-40 bg-gradient-to-r from-white to-gray-100 flex items-center justify-center">
-                        <i class="fas fa-mortar-pestle text-4xl text-gray-400"></i>
+                    <div class="relative">
+                        <img src="acompanhamentos/arroz.jpg" alt="Arroz" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-mortar-pestle text-4xl text-gray-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -734,8 +831,11 @@
 
                 <!-- Feijão -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="sides feijao" data-search="Feijão">
-                    <div class="w-full h-40 bg-gradient-to-r from-brown-100 to-brown-200 flex items-center justify-center">
-                        <i class="fas fa-mortar-pestle text-4xl text-brown-400"></i>
+                    <div class="relative">
+                        <img src="acompanhamentos/feijao.jpg" alt="Feijão" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-mortar-pestle text-4xl text-brown-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -748,8 +848,11 @@
 
                 <!-- Molho Queijo -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="sides molho" data-search="Molho Queijo casa">
-                    <div class="w-full h-40 bg-gradient-to-r from-yellow-100 to-yellow-200 flex items-center justify-center">
-                        <i class="fas fa-cheese text-4xl text-yellow-400"></i>
+                    <div class="relative">
+                        <img src="acompanhamentos/molho-queijo.jpg" alt="Molho Queijo" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-cheese text-4xl text-yellow-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -769,7 +872,8 @@
                 <!-- Açaí Supreme -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="popular desserts acai" data-search="Açaí Supreme frutas">
                     <div class="relative">
-                        <div class="w-full h-40 bg-gradient-to-r from-purple-100 to-purple-200 flex items-center justify-center">
+                        <img src="sobremesas/acai-supreme.jpg" alt="Açaí Supreme" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
                             <i class="fas fa-ice-cream text-4xl text-purple-400"></i>
                         </div>
                         <span class="absolute top-2 left-2 bg-grill text-white text-xs font-bold px-2 py-1 rounded" data-i18n="popular_badge">Mais vendido</span>
@@ -786,8 +890,11 @@
 
                 <!-- Sorvetes -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="desserts sorvete" data-search="Sorvetes bolas">
-                    <div class="w-full h-40 bg-gradient-to-r from-blue-100 to-blue-200 flex items-center justify-center">
-                        <i class="fas fa-ice-cream text-4xl text-blue-400"></i>
+                    <div class="relative">
+                        <img src="sobremesas/sorvetes.jpg" alt="Sorvetes" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-ice-cream text-4xl text-blue-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -800,8 +907,11 @@
 
                 <!-- Mousse de Chocolate -->
                 <div class="menu-card bg-white rounded-xl shadow-md overflow-hidden" data-tags="desserts chocolate" data-search="Mousse de Chocolate">
-                    <div class="w-full h-40 bg-gradient-to-r from-brown-100 to-brown-200 flex items-center justify-center">
-                        <i class="fas fa-birthday-cake text-4xl text-brown-400"></i>
+                    <div class="relative">
+                        <img src="sobremesas/mousse-chocolate.jpg" alt="Mousse de Chocolate" class="dish-image image-loading" onload="this.classList.remove('image-loading')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-birthday-cake text-4xl text-brown-400"></i>
+                        </div>
                     </div>
                     <div class="p-3">
                         <div class="flex justify-between items-start">
@@ -816,41 +926,22 @@
     </div>
 
     <!-- Navegação inferior (footer) -->
-    <!--<div class="fixed bottom-0 left-0 right-0 bg-nachapa shadow-lg flex justify-around items-center py-3">
-        <a href="#" class="text-center nav-link active">
-            <i class="fas fa-home text-lg"></i>
-            <p class="text-xs mt-1" data-i18n="nav_home">Início</p>
-        </a>
-        <a href="#" id="searchNav" class="text-center nav-link">
-            <i class="fas fa-search text-lg"></i>
-            <p class="text-xs mt-1" data-i18n="nav_search">Buscar</p>
-        </a>
-        <a href="https://instagram.com/nachapa_lux" target="_blank" class="text-center nav-link">
-            <i class="fab fa-instagram text-lg"></i>
-            <p class="text-xs mt-1" data-i18n="nav_instagram">Instagram</p>
-        </a>
-        <a href="tel:+352691244215" class="text-center nav-link">
-            <i class="fas fa-phone-alt text-lg"></i>
-            <p class="text-xs mt-1" data-i18n="nav_contact">Contato</p>
-        </a>
-    </div>-->
-
     <div class="fixed bottom-0 left-0 right-0 bg-nachapa shadow-lg flex justify-around items-center py-3 safe-area-bottom">
-        <a href="#" class="text-center nav-link active">
-            <i class="fas fa-home text-lg"></i>
-            <p class="text-xs mt-1" data-i18n="nav_home">Início</p>
+        <a href="#" class="text-center nav-link active flex flex-col items-center px-2">
+            <i class="fas fa-home text-lg mb-1"></i>
+            <span class="text-xs" data-i18n="nav_home">Início</span>
         </a>
-        <a href="#" id="searchNav" class="text-center nav-link">
-            <i class="fas fa-search text-lg"></i>
-            <p class="text-xs mt-1" data-i18n="nav_search">Buscar</p>
+        <a href="#" id="searchNav" class="text-center nav-link flex flex-col items-center px-2">
+            <i class="fas fa-search text-lg mb-1"></i>
+            <span class="text-xs" data-i18n="nav_search">Buscar</span>
         </a>
-        <a href="https://instagram.com/nachapa_lux" target="_blank" class="text-center nav-link">
-            <i class="fab fa-instagram text-lg"></i>
-            <p class="text-xs mt-1" data-i18n="nav_instagram">Instagram</p>
+        <a href="https://instagram.com/nachapa_lux" target="_blank" class="text-center nav-link flex flex-col items-center px-2">
+            <i class="fab fa-instagram text-lg mb-1"></i>
+            <span class="text-xs" data-i18n="nav_instagram">Instagram</span>
         </a>
-        <a href="tel:+352691244215" class="text-center nav-link">
-            <i class="fas fa-phone-alt text-lg"></i>
-            <p class="text-xs mt-1" data-i18n="nav_contact">Contato</p>
+        <a href="tel:+352691244215" class="text-center nav-link flex flex-col items-center px-2">
+            <i class="fas fa-phone-alt text-lg mb-1"></i>
+            <span class="text-xs" data-i18n="nav_contact">Contato</span>
         </a>
     </div>
 
@@ -920,7 +1011,7 @@
                 "burger3_name": "Hambúrguer Vegetariano",
                 "burger3_desc": "Hambúrguer de legumes, queijo, tomate e molho especial",
                 "burger4_name": "Menu Infantil",
-                "burger4_desc": "Hambúrguer, fritas e bebida",
+                "burger4_desc": "Hambúrguer ou Nuggets, fritas e bebida",
                 "burger5_name": "Premium Cheddar",
                 "burger5_desc": "Hambúrguer, cebola caramelizada, cheddar e bacon crispy",
                 "burger6_name": "Premium Bacon BBQ",
@@ -1355,10 +1446,10 @@
                     noResults.id = 'noResults';
                     noResults.className = 'text-center py-10 px-4';
                     noResults.innerHTML = `
-                                <i class="fas fa-fire fa-3x text-gray-300 mb-4"></i>
-                                <h3 class="text-xl font-bold text-gray-600" data-i18n="no_results_title">Nenhum item popular encontrado</h3>
-                                <p class="text-gray-500" data-i18n="no_results_text">Volte em breve para ver nossos mais vendidos!</p>
-                            `;
+                                    <i class="fas fa-fire fa-3x text-gray-300 mb-4"></i>
+                                    <h3 class="text-xl font-bold text-gray-600" data-i18n="no_results_title">Nenhum item popular encontrado</h3>
+                                    <p class="text-gray-500" data-i18n="no_results_text">Volte em breve para ver nossos mais vendidos!</p>
+                                `;
                     menuContent.appendChild(noResults);
 
                     // Traduzir mensagem
@@ -1404,7 +1495,9 @@
                     const nameElement = card.querySelector('h3');
                     const descElement = card.querySelector('p');
                     nameElement.innerHTML = nameElement.textContent;
-                    descElement.innerHTML = descElement.textContent;
+                    if (descElement) {
+                        descElement.innerHTML = descElement.textContent;
+                    }
                 });
 
                 document.querySelectorAll('.category-section').forEach(section => {
@@ -1470,10 +1563,10 @@
                     noResults.id = 'noResults';
                     noResults.className = 'text-center py-10 px-4';
                     noResults.innerHTML = `
-                                <i class="fas fa-search fa-3x text-gray-300 mb-4"></i>
-                                <h3 class="text-xl font-bold text-gray-600" data-i18n="no_results_title">Nenhum resultado encontrado</h3>
-                                <p class="text-gray-500" data-i18n="no_results_text">Tente usar palavras-chave diferentes</p>
-                            `;
+                                    <i class="fas fa-search fa-3x text-gray-300 mb-4"></i>
+                                    <h3 class="text-xl font-bold text-gray-600" data-i18n="no_results_title">Nenhum resultado encontrado</h3>
+                                    <p class="text-gray-500" data-i18n="no_results_text">Tente usar palavras-chave diferentes</p>
+                                `;
                     menuContent.appendChild(noResults);
 
                     // Traduzir mensagem de nenhum resultado
@@ -1556,6 +1649,28 @@
             });
         });
 
+        // Correções para Safari no iPhone
+        function fixSafariIssues() {
+            const isIosSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+                /Safari/.test(navigator.userAgent) &&
+                !window.MSStream;
+
+            if (isIosSafari) {
+                // Ajustar altura do viewport
+                function setViewportHeight() {
+                    const vh = window.innerHeight * 0.01;
+                    document.documentElement.style.setProperty('--vh', `${vh}px`);
+                }
+
+                setViewportHeight();
+                window.addEventListener('resize', setViewportHeight);
+                window.addEventListener('orientationchange', setViewportHeight);
+
+                // Prevenir bounce/scroll excessivo
+                document.body.style.overscrollBehaviorY = 'none';
+            }
+        }
+
         // Inicialização
         document.addEventListener('DOMContentLoaded', function () {
             // Garantir que todos os itens estejam visíveis inicialmente
@@ -1563,62 +1678,24 @@
 
             // Configurar o idioma inicial
             changeLanguage('pt');
-        });
 
-        function fixIosNavbar() {
-            // Detectar se é iOS
-            const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            // Aplicar correções para Safari
+            fixSafariIssues();
 
-            if (isIos) {
-                // Ajustar a altura da navbar para considerar a safe area
-                const navbar = document.querySelector('.fixed');
-                if (navbar) {
-                    // Aplicar padding para a safe area do iPhone
-                    navbar.style.paddingBottom = 'env(safe-area-inset-bottom)';
-                    navbar.style.bottom = '0';
-                }
-
-                // Prevenir comportamento de pull-to-refresh que pode afetar a navbar
-                document.body.style.overscrollBehaviorY = 'none';
-            }
-        }
-
-        // Função para ajustar o layout quando o viewport muda (teclado aparece/desaparece)
-        function handleViewportChanges() {
-            // Ajustar a posição da navbar quando o teclado aparece/desaparece
-            window.addEventListener('resize', function () {
-                const navbar = document.querySelector('.fixed');
-                if (navbar) {
-                    navbar.style.bottom = '0';
-                }
-            });
-        }
-
-        // Inicializar as correções quando o DOM estiver pronto
-        document.addEventListener('DOMContentLoaded', function () {
-            fixIosNavbar();
-            handleViewportChanges();
-
-            // Adicionar um pequeno delay para garantir que tudo esteja carregado
+            // Forçar repaint para evitar problemas de renderização
             setTimeout(() => {
-                // Forçar repaint da navbar para evitar problemas de renderização
                 const navbar = document.querySelector('.fixed');
+                const header = document.querySelector('.bg-nachapa');
+
                 if (navbar) {
                     navbar.style.transform = 'translateZ(0)';
                 }
+
+                if (header) {
+                    header.style.transform = 'translateZ(0)';
+                }
             }, 100);
         });
-
-        // Correção adicional para quando a página é rolada
-        window.addEventListener('scroll', function () {
-            const navbar = document.querySelector('.fixed');
-            if (navbar) {
-                // Manter a navbar sempre no fundo da tela
-                navbar.style.bottom = '0';
-                navbar.style.transform = 'translateY(0)';
-            }
-        });
-
     </script>
 </body>
 </html>
